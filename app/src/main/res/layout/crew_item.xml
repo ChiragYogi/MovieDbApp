@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/image_card_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:cardElevation = "16dp"
+        app:cardCornerRadius = "160dp"
+        android:layout_margin = "16dp"
+        android:layout_gravity="center"
+        android:foregroundGravity = "center">
+
+    <ImageView
+        android:id="@+id/crew_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:src="@drawable/ic_baseline_favorite_24"
+        android:contentDescription="@string/castimagecontentdescription" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/crew_name_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/app_name"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/crew_job_name_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/app_name"
+        android:textSize="16sp"
+        android:layout_gravity="center"/>
+
+
+</LinearLayout>

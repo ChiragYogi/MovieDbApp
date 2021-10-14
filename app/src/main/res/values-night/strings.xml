@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="movies">Movies</string>
+    <string name="tvshow">TvShow</string>
+    <string name="please_wait">Please Wait......</string>
+    <string name="release_date">Release Date :-</string>
+    <string name="retry">Retry</string>
+    <string name="posterImage">Poster Image For movie And Tv</string>
+    <string name="rating">rating</string>
+    <string name="description">Description  :-</string>
+    <string name="dumy">Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy</string>
+    <string name="showmore">showmore...</string>
+    <string name="cast">Cast</string>
+    <string name="crew_txt">Crew</string>
+    <string name="top_reviews">Top reviews</string>
+    <string name="visit_homepage">Visit Homepage</string>
+    <string name="castimagecontentdescription">castimagecontentdescription</string>
+    <string name="tag_description_error">No Description Found</string>
+    <string name="cast_information_not_found">Cast Information Not Found</string>
+    <string name="crew_information_not_found">Crew Information Not Found</string>
+    <string name="no_review_found">No Review Found</string>
+    <string name="please_try_again">Please Try again</string>
+
+</resources>

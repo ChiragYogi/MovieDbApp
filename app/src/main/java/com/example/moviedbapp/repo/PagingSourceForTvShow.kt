@@ -3,6 +3,7 @@ package com.example.moviedbapp.repo
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.moviedbapp.BuildConfig
 import com.example.moviedbapp.modal.tvshow.TvShowList
 import com.example.moviedbapp.network.TmdbNetworkClient.apiService
 import com.example.moviedbapp.utiles.Constance
@@ -17,7 +18,7 @@ class PagingSourceForTvShow():
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, TvShowList> {
         val position = params.key ?: Constance.TMDB_PAGE_NUMBER_START
         return try {
-            val responce = apiService.getPopularTvShow(API_KEY,position)
+            val responce = apiService.getPopularTvShow(BuildConfig.API_KEY,position)
             val result = responce.results
             Log.d("responce and result","$result")
             Log.d("responce and result", Thread.currentThread().name)

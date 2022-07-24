@@ -5,28 +5,23 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.moviedbapp.R
-import com.example.moviedbapp.TMDBApplication
 import com.example.moviedbapp.databinding.FragmentTvShowBinding
 import com.example.moviedbapp.modal.tvshow.TvShowList
 import com.example.moviedbapp.ui.viewmodel.PagingDataViewModel
-import com.example.moviedbapp.ui.viewmodel.TMDBViewModelProvider
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class TvShowFragment : Fragment(R.layout.fragment_tv_show),
     TvShowPagingAdepter.OnItemClickListenerForTv {
 
     private var _binding: FragmentTvShowBinding? = null
     private val binding get() = _binding!!
-    private val mViewModel: PagingDataViewModel by viewModels {
-        TMDBViewModelProvider((activity?.application as TMDBApplication).repo)
-    }
+    private val mViewModel: PagingDataViewModel by viewModels()
     private val mAdepter = TvShowPagingAdepter(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,11 +39,10 @@ class TvShowFragment : Fragment(R.layout.fragment_tv_show),
     }
 
     private fun setUpObserver() {
-        mViewModel.tvShowList.observe(viewLifecycleOwner, { tvShowData ->
-                mAdepter.submitData(lifecycle,tvShowData)
+        mViewModel.tvShowList.observe(viewLifecycleOwner) { tvShowData ->
+            mAdepter.submitData(lifecycle, tvShowData)
 
-            })
-
+        }
 
 
     }

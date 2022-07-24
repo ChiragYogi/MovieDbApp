@@ -1,10 +1,9 @@
 package com.example.moviedbapp
 
 import android.app.Application
-import com.example.moviedbapp.network.TmdbNetworkClient
-import com.example.moviedbapp.repo.TmdbRepository
+import com.example.moviedbapp.repo.MainTmdbRepository
+import dagger.hilt.android.HiltAndroidApp
 
-class TMDBApplication: Application() {
 
-   val repo by lazy { TmdbRepository() }
-}
+@HiltAndroidApp
+class TMDBApplication: Application()

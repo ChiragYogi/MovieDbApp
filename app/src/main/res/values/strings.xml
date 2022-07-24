@@ -11,7 +11,7 @@
     <string name="rating">rating</string>
     <string name="description">Description :-</string>
     <string name="dumy">Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy Dummy dummy</string>
-    <string name="showmore">showmore...</string>
+    <string name="showmore">showmore…</string>
     <string name="cast">Cast</string>
     <string name="crew_txt">Crew</string>
     <string name="top_reviews">Top reviews</string>
@@ -22,5 +22,6 @@
     <string name="crew_information_not_found">Crew Information Not Found</string>
     <string name="no_review_found">No Review Found</string>
     <string name="please_try_again">Please Try again</string>
+    <string name="error_message">Somthing went wrong</string>
 
 </resources>

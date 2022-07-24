@@ -13,7 +13,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface TmdbNetworkCall {
+interface TmdbNetworkService {
 
     @GET("movie/popular")
     suspend fun getPopularMovie(

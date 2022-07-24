@@ -27,8 +27,8 @@ object TmdbNetworkClient {
             .build()
     }
 
-    val apiService: TmdbNetworkCall by lazy {
-        retrofit.create(TmdbNetworkCall::class.java)
+    val apiService: TmdbNetworkService by lazy {
+        retrofit.create(TmdbNetworkService::class.java)
 
     }
 

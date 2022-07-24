@@ -5,30 +5,25 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.moviedbapp.R
-import com.example.moviedbapp.TMDBApplication
 import com.example.moviedbapp.databinding.FragmentMovieBinding
 import com.example.moviedbapp.modal.movie.MovieList
 import com.example.moviedbapp.ui.viewmodel.PagingDataViewModel
-import com.example.moviedbapp.ui.viewmodel.TMDBViewModelProvider
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MovieFragment : Fragment(R.layout.fragment_movie),
     MoviePagingAdepter.OnItemClickListenerForMovie {
 
     private var _binding: FragmentMovieBinding? = null
     private val binding get() = _binding!!
-    private val mViewModel: PagingDataViewModel by viewModels {
-        TMDBViewModelProvider((activity?.application as TMDBApplication).repo)
-    }
-    private val mAdepter = MoviePagingAdepter(this)
+    private val mViewModel by viewModels<PagingDataViewModel> ()
 
+    private val mAdepter = MoviePagingAdepter(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -71,9 +66,9 @@ class MovieFragment : Fragment(R.layout.fragment_movie),
     }
 
     private fun setUpObserver() {
-        mViewModel.movieList.observe(viewLifecycleOwner, {
+        mViewModel.movieList.observe(viewLifecycleOwner) {
             mAdepter.submitData(lifecycle, it)
-        })
+        }
 
 
     }

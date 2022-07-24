@@ -1,11 +1,7 @@
 package com.example.moviedbapp.ui.movies
 
 import android.app.Dialog
-import android.content.Intent
-import android.content.Intent.ACTION_VIEW
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -15,30 +11,35 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.moviedbapp.R
-import com.example.moviedbapp.TMDBApplication
 import com.example.moviedbapp.databinding.FragmentMovieDetailBinding
+import com.example.moviedbapp.modal.movie.MovieResponseWithAllDetail
 import com.example.moviedbapp.ui.adepter.CastAdepter
 import com.example.moviedbapp.ui.adepter.CrewAdepter
 import com.example.moviedbapp.ui.adepter.ReviewAdepter
-import com.example.moviedbapp.ui.viewmodel.TMDBViewModelProvider
 import com.example.moviedbapp.utiles.Constance
 import com.example.moviedbapp.utiles.Resource
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
 
     private var _binding: FragmentMovieDetailBinding? = null
     private val binding get() = _binding!!
     private var mProgressDialog: Dialog? = null
-    private val mViewModel: MovieDetailViewModel by viewModels {
-        TMDBViewModelProvider((activity?.application as TMDBApplication).repo)
-    }
+
+    private val mViewModel by viewModels<MovieDetailViewModel>()
 
     private val castAdepter = CastAdepter()
     private val crewAdepter = CrewAdepter()
     private val reviewAdepter = ReviewAdepter()
 
     private val args: MovieDetailFragmentArgs by navArgs()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        observeMovieDetail()
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,16 +50,90 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
         val movieId = movieArgs?.id
 
         if (movieId != null) {
-            mViewModel.getMovieData(movieId)
+            mViewModel.getMovieId(movieId)
         }
 
-        observerDetailData()
-        observerReviewData()
-        observerCastData()
+
 
         setUpCastRecyclerView()
         setUpCrewRecyclerView()
         setUpReviewRecyclerView()
+
+    }
+
+    private fun observeMovieDetail() {
+        mViewModel.movieDetails.observe(this) { response ->
+            when (response) {
+                is Resource.Error -> {
+                    showErrorsAndHideView(response.message ?: getString(R.string.error_message))
+                }
+                is Resource.Loading -> {
+                    showCustomDialog()
+                }
+                is Resource.Success -> {
+                    setDataInUi(response.data)
+                }
+            }
+        }
+
+    }
+
+    private fun setDataInUi(data: MovieResponseWithAllDetail?) {
+        hideCustomDialog()
+        data?.movieDetailResponse?.let { movieResponse ->
+            binding.apply {
+                Glide.with(this@MovieDetailFragment)
+                    .load("${Constance.POSTER_IMAGE_PATH_PREFIX}${movieResponse.poster_path}")
+                    .fitCenter().error(R.drawable.ic_movie).into(posterImageView)
+                averageVoteTxt.text = movieResponse.vote_average.toInt().toString()
+                tagLine.text = movieResponse.tagline
+                spokenLanguages.text =
+                    movieResponse.spoken_languages.joinToString { it.english_name }
+                if (movieResponse.overview.isNotEmpty()) {
+                    tagDescription.text = movieResponse.overview
+                } else {
+                    binding.tagDescriptionError.visibility = View.VISIBLE
+                }
+
+            }
+        }
+
+        data?.reviewResponse?.let { movieReview ->
+            if (movieReview.results.isNotEmpty()) {
+                reviewAdepter.swapData(movieReview.results)
+            } else {
+                binding.reviewRvView.visibility = View.GONE
+                binding.noReviewErrorTxt.visibility = View.VISIBLE
+            }
+        }
+
+        data?.castResponse?.let { castResponse ->
+
+            if (castResponse.crew.isNotEmpty()) {
+                crewAdepter.swapData(castResponse.crew)
+            } else {
+                binding.noCrewErrorTxt.visibility = View.VISIBLE
+            }
+            if (castResponse.cast.isNotEmpty()) {
+                castAdepter.swapData(castResponse.cast)
+            } else {
+                binding.noCastErrorTxt.visibility = View.VISIBLE
+            }
+
+        }
+    }
+
+    private fun showErrorsAndHideView(message: String) {
+        hideCustomDialog()
+        binding.apply {
+            noCrewErrorTxt.visibility = View.VISIBLE
+            binding.noReviewErrorTxt.visibility = View.VISIBLE
+            binding.tagDescriptionError.visibility = View.VISIBLE
+            binding.tagDescriptionError.text = message
+            binding.noReviewErrorTxt.text = message
+            noCrewErrorTxt.text = message
+
+        }
 
     }
 
@@ -98,120 +173,6 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
         }
     }
 
-
-    private fun observerCastData() {
-        mViewModel.movieCast.observe(viewLifecycleOwner, { castResponse ->
-            when (castResponse) {
-                is Resource.Error -> {
-                    hideCustomDialog()
-                    castResponse.message?.let {
-                        binding.noCrewErrorTxt.visibility = View.VISIBLE
-                        binding.noCrewErrorTxt.text = it
-                    }
-                }
-
-                is Resource.Loading -> {
-                    showCustomDialog()
-                }
-
-                is Resource.Success -> {
-                    hideCustomDialog()
-                    castResponse.data?.let { castResponseData ->
-
-                        if (castResponseData.crew.isNotEmpty()) {
-                            crewAdepter.swapData(castResponseData.crew)
-                        } else {
-                            binding.noCrewErrorTxt.visibility = View.VISIBLE
-                        }
-                        if (castResponseData.cast.isNotEmpty()) {
-                            castAdepter.swapData(castResponseData.cast)
-                        } else {
-
-                            binding.noCastErrorTxt.visibility = View.VISIBLE
-                        }
-                    }
-
-                }
-            }
-
-        })
-
-    }
-
-
-    private fun observerReviewData() {
-        mViewModel.movieReview.observe(viewLifecycleOwner, { reviewResponse ->
-            when (reviewResponse) {
-                is Resource.Error -> {
-                    hideCustomDialog()
-                    reviewResponse.message?.let {
-                        binding.noReviewErrorTxt.visibility = View.VISIBLE
-                        binding.noReviewErrorTxt.text = it
-                    }
-                }
-
-                is Resource.Loading -> {
-                    showCustomDialog()
-                }
-
-                is Resource.Success -> {
-                    hideCustomDialog()
-                    reviewResponse.data?.let { reviewData ->
-                        if (reviewData.total_pages > 0) {
-                            reviewAdepter.swapData(reviewData.results)
-                        } else {
-                            binding.reviewRvView.visibility = View.GONE
-                            binding.noReviewErrorTxt.visibility = View.VISIBLE
-                        }
-                    }
-                }
-
-            }
-
-        })
-    }
-
-    private fun observerDetailData() {
-        mViewModel.movieDetail.observe(viewLifecycleOwner, { detailResponse ->
-
-            when (detailResponse) {
-                is Resource.Error -> {
-                    hideCustomDialog()
-                    detailResponse.message?.let {
-                        binding.tagDescriptionError.visibility = View.VISIBLE
-                        binding.tagDescriptionError.text = it
-                    }
-                }
-
-                is Resource.Loading -> {
-                    showCustomDialog()
-                }
-
-                is Resource.Success -> {
-                    hideCustomDialog()
-                    detailResponse.data?.let { movieDetail ->
-                        binding.apply {
-                            Glide.with(this@MovieDetailFragment)
-                                .load("${Constance.POSTER_IMAGE_PATH_PREFIX}${movieDetail.poster_path}")
-                                .fitCenter().error(R.drawable.ic_movie).into(posterImageView)
-                            averageVoteTxt.text = movieDetail.vote_average.toInt().toString()
-                            tagLine.text = movieDetail.tagline
-                            spokenLanguages.text =
-                                movieDetail.spoken_languages.joinToString { it.english_name }
-                            if (movieDetail.overview.isNotEmpty()) {
-                                tagDescription.text = movieDetail.overview
-                            } else {
-                                binding.tagDescriptionError.visibility = View.VISIBLE
-                            }
-
-                        }
-                    }
-                }
-
-            }
-
-        })
-    }
 
     private fun hideCustomDialog() {
         mProgressDialog?.dismiss()
